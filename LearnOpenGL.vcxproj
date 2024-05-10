@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Mattia\Documents\GitHubProjects\LearnOpenGL\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Mattia\Documents\GitHubProjects\LearnOpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\mas20\Documents\GitHubProjects\LearnOpenGL\Libraries\include;C:\Users\Mattia\Documents\GitHubProjects\LearnOpenGL\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\mas20\Documents\GitHubProjects\LearnOpenGL\Libraries\lib;C:\Users\Mattia\Documents\GitHubProjects\LearnOpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Mattia\Documents\GitHubProjects\LearnOpenGL\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Mattia\Documents\GitHubProjects\LearnOpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\mas20\Documents\GitHubProjects\LearnOpenGL\Libraries\include;C:\Users\Mattia\Documents\GitHubProjects\LearnOpenGL\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\mas20\Documents\GitHubProjects\LearnOpenGL\Libraries\lib;C:\Users\Mattia\Documents\GitHubProjects\LearnOpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -141,6 +141,7 @@
     <ClCompile Include="sampleWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="0 CMake.md" />
     <None Include="1 Window creation.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

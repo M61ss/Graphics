@@ -24,5 +24,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="1 Window creation.md" />
+    <None Include="0 CMake.md" />
   </ItemGroup>
 </Project>

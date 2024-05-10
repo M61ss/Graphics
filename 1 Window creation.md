@@ -1,2 +1,2 @@
-# OpenGL basics
+# OpenGL basic window creation
 
