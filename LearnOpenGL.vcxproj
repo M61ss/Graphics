@@ -141,8 +141,7 @@
     <ClCompile Include="sampleWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="0 CMake.md" />
-    <None Include="1 Window creation.md" />
+    <None Include="Notes.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

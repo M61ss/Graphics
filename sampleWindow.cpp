@@ -5,7 +5,8 @@
 int main() 
 {
 	// Initialize GLFW
-	if (glfwInit() == GLFW_FALSE) {
+	if (glfwInit() == GLFW_FALSE) 
+	{
 		return -1;
 	}
 
@@ -14,11 +15,10 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
 	// Tell GLFW we are using the CORE profile
-	// So that means we only have the modern functions
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create a GLFWwindow object of 800 by 800 pixels, naming it "YoutubeOpenGL"
-	GLFWwindow* window = glfwCreateWindow(800, 800, "LearneOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(800, 600, "LearneOpenGL", NULL, NULL);
 	// Error check if the window fails to create
 	if (window == NULL)
 	{
@@ -35,7 +35,7 @@ int main()
 	gladLoadGL();
 	// Specify the viewport of OpenGL in the Window
 	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
-	glViewport(0, 0, 800, 800);
+	glViewport(0, 0, 800, 600);
 
 
 
@@ -43,14 +43,14 @@ int main()
 	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 	// Clean the back buffer and assign the new color to it
 	glClear(GL_COLOR_BUFFER_BIT);
-	// Swap the back buffer with the front buffer
-	glfwSwapBuffers(window);
 
 
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
+		// Swap the back buffer with the front buffer
+		glfwSwapBuffers(window);
 		// Take care of all GLFW events
 		glfwPollEvents();
 	}
