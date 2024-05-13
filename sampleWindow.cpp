@@ -5,7 +5,9 @@
 int main() 
 {
 	// Initialize GLFW
-	glfwInit();
+	if (glfwInit() == GLFW_FALSE) {
+		return -1;
+	}
 
 	// Tell GLFW what version of OpenGL we are using
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
