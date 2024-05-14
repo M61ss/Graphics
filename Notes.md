@@ -103,13 +103,7 @@ glViewport(0, 0, 800, 600);
 
 _Note_: we can set also smaller OpenGL viewport's dimensions than the GLFW's one. It is clear that a piece of GLFW's viewport won't be shown.
 
-If we want to get the viewport resizable, then we need to call this **callback function**:
-
-```c++
-glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-```
-
-Where `window` is the window that we want to get resizable and `framebuffer_size_callback` is a pointer to function that performs the resize whenever the user resizes the window from the GUI. `framebuffer_size_callback` is implemented like this:
+If we want to get the viewport resizable, then we need to impplement this **callback function**:
 
 ```c++
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -119,6 +113,14 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 ```
 
 This function simply resizes `window` with new `width` and `height`.
+
+Then, we need to assign the callback function to our window. We can do that this way:
+
+```c++
+glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+```
+
+`window` is the window that we want to get resizable and `framebuffer_size_callback` is a pointer to the callback function that we want to assign to that window. This way we are specifing the behaviour of `window` when the user resizes it via GUI.
 
 There are also many callbacks functions we can set to **register our own functions**, but only after we have created the window and before the render loop is started.
 
@@ -139,13 +141,17 @@ At the start the loop checks if the window has been instructed to be closed with
 The `glfwSwapBuffers()` will swap the color buffer of the `window` (a large 2D buffer that contains color values for each pixel in GLFW's window) that is used to render to during this render iteration and show it as output to the screen.
 
 ---
-*Notice*:
+
+_Notice_:
 \
-All rendering machines keep in memory two buffers: the **front buffer** for the final output image, the **back buffer** which store the frame that is modified from rendering functions and will be shown at next iteration of the render loop. Every operation performed on the window into the loop is applied on the back buffer that will be shown at te next start of the loop (this is the reason why `glfwSwapBuffers()` is called at the start of loop: in fact, operation executed before start of it were applied on the back buffer). Then buffers are swapped at every iteration so that the front buffer become the back one and vice versa.
+All rendering machines keep in memory two buffers: the **front buffer** for the final output image, the **back buffer** which store the frame that is modified from rendering functions and will be shown at next iteration of the render loop.
 \
+Every operation executed into the loop is applied on the back buffer that will be shown at te next start of the loop (this is the reason why `glfwSwapBuffers()` is called at the start of loop: in fact, operation executed before start of it were applied on the back buffer). Then buffers are swapped at every iteration so that the front buffer become the back one and vice versa.
+
 At the first iteration it is clear that the front buffer is empty; so simply swapping the two buffers would mean to put as back buffer an empty one. However, looking at the machine working, it seems that at the first swap operation, when the front buffer is still empty, before to swap for the first time the two buffers, GLFW performs first of all a copy of the back buffer into the front one, then executes the swap (that has only a logical effect because this time buffers have same contents).
 
 ---
+
 Then `glfwPollEvents()` checks if any events are triggered. To manage events it calls callback functions.
 
 ## Cleanup before close

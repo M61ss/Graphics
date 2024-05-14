@@ -2,6 +2,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
 int main() 
 {
 	// Initialize GLFW
@@ -28,6 +30,8 @@ int main()
 	}
 	// Introduce the window into the current context
 	glfwMakeContextCurrent(window);
+	// Setting the window resizable
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 
 
@@ -63,4 +67,9 @@ int main()
 	glfwTerminate();
 
 	return 0;
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
 }
