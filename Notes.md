@@ -46,7 +46,7 @@ The first argument is the option we want to configure.
 \
 The second argument is the new option's value.
 \
-The majority of OpenGL's functions works all this way, i.e. putting the option to be modified in first position and new option's values in nexts, so I won't repeat subsequently.
+The majority of OpenGL's functions works all this way, i.e. putting the option to be modified in first position and new option's values in next, so I won't repeat subsequently.
 
 ### Setting up GLAD
 
@@ -69,7 +69,7 @@ We pass a `GLADloadproc` to the function to load the address of the OpenGL funct
 The standard procedure to create a window is:
 
 ```c++
-GLFWwindow* window = glfwCreateWindow(800, 600, "LearneOpenGL", NULL, NULL);
+GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
 // Error check if the window fails to create
 if (window == NULL)
 {
@@ -103,7 +103,7 @@ glViewport(0, 0, 800, 600);
 
 _Note_: we can set also smaller OpenGL viewport's dimensions than the GLFW's one. It is clear that a piece of GLFW's viewport won't be shown.
 
-If we want to get the viewport resizable, then we need to impplement this **callback function**:
+If we want to get the viewport resizable, then we need to implement this **callback function**:
 
 ```c++
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -120,13 +120,13 @@ Then, we need to assign the callback function to our window. We can do that this
 glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 ```
 
-`window` is the window that we want to get resizable and `framebuffer_size_callback` is a pointer to the callback function that we want to assign to that window. This way we are specifing the behaviour of `window` when the user resizes it via GUI.
+`window` is the window that we want to get resizable and `framebuffer_size_callback` is a pointer to the callback function that we want to assign to that window. This way we are specifying the behavior of `window` when the user resizes it via GUI.
 
 There are also many callbacks functions we can set to **register our own functions**, but only after we have created the window and before the render loop is started.
 
 ### Render loop
 
-To keep the window updated we need to run a loop which listens for events continiously:
+To keep the window updated we need to run a loop which listens for events continuously:
 
 ```c++
 while(!glfwWindowShouldClose(window))
@@ -146,7 +146,7 @@ _Notice_:
 \
 All rendering machines keep in memory two buffers: the **front buffer**, for the final output image, and the **back buffer**, which store the frame that is modified from rendering functions and will be shown at next iteration of the render loop.
 \
-Every operation executed into the loop is applied on the back buffer that will be shown at te next start of the loop. It is possible thanks to `glfwSwapBuffers()`, which is a function that swap front and back buffers everytime it get called. 
+Every operation executed into the loop is applied on the back buffer that will be shown at te next start of the loop. It is possible thanks to `glfwSwapBuffers()`, which is a function that swap front and back buffers every time it get called. 
 \
 So, buffers are swapped at every iteration so that the front buffer become the back one and vice versa.
 
@@ -156,7 +156,35 @@ Then `glfwPollEvents()` checks if any events are triggered. To manage events it 
 
 ## Input
 
-To manage inputs of a GLFW window we will create a function which we call everytime a new iteration of the render loop starts. Inside that, for example, we can put `glfwGetKey()`. This function returns whether the specified key is currently being pressed.
+To manage inputs of a GLFW window we will create a function which we call every time a new iteration of the render loop starts. Inside that we should put behaviors for every input that we want to manage. 
+
+```c++
+void processInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
+```
+
+For example, here we used `glfwGetKey()`. This function returns whether the specified button (`GLFW_KEY_ESCAPE`) is currently being pressed or, generalizing, it returns the current status of a key. 
+
+Finally, the render loop should look like this:
+
+```c++
+while (!glfwWindowShouldClose(window))
+{
+	processInput(window);
+
+	// ... rendering operations ...
+
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+}
+```
+
+## Rendering operations
+
+
 
 ## Cleanup before close
 
