@@ -1,6 +1,6 @@
 # Window
 
-The entire GLFW windowing system guide is available at the [official documentation](http://www.glfw.org/docs/latest/window.html).
+The entire GLFW windowing system guide is available at the [GLFW's official documentation](http://www.glfw.org/docs/latest/window.html).
 
 ## Initialization
 
@@ -144,15 +144,19 @@ The `glfwSwapBuffers()` will swap the color buffer of the `window` (a large 2D b
 
 _Notice_:
 \
-All rendering machines keep in memory two buffers: the **front buffer** for the final output image, the **back buffer** which store the frame that is modified from rendering functions and will be shown at next iteration of the render loop.
+All rendering machines keep in memory two buffers: the **front buffer**, for the final output image, and the **back buffer**, which store the frame that is modified from rendering functions and will be shown at next iteration of the render loop.
 \
-Every operation executed into the loop is applied on the back buffer that will be shown at te next start of the loop (this is the reason why `glfwSwapBuffers()` is called at the start of loop: in fact, operation executed before start of it were applied on the back buffer). Then buffers are swapped at every iteration so that the front buffer become the back one and vice versa.
-
-At the first iteration it is clear that the front buffer is empty; so simply swapping the two buffers would mean to put as back buffer an empty one. However, looking at the machine working, it seems that at the first swap operation, when the front buffer is still empty, before to swap for the first time the two buffers, GLFW performs first of all a copy of the back buffer into the front one, then executes the swap (that has only a logical effect because this time buffers have same contents).
+Every operation executed into the loop is applied on the back buffer that will be shown at te next start of the loop. It is possible thanks to `glfwSwapBuffers()`, which is a function that swap front and back buffers everytime it get called. 
+\
+So, buffers are swapped at every iteration so that the front buffer become the back one and vice versa.
 
 ---
 
 Then `glfwPollEvents()` checks if any events are triggered. To manage events it calls callback functions.
+
+## Input
+
+To manage inputs of a GLFW window we will create a function which we call everytime a new iteration of the render loop starts. Inside that, for example, we can put `glfwGetKey()`. This function returns whether the specified key is currently being pressed.
 
 ## Cleanup before close
 
