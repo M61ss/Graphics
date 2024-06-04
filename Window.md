@@ -184,7 +184,25 @@ while (!glfwWindowShouldClose(window))
 
 ## Rendering operations
 
+Inside the render loop we can now put all rendering operations which we want to perform. In this example we might try to change the background color of the window:
 
+```c++
+while (!glfwWindowShouldClose(window))
+{
+	processInput(window);
+
+	// our rendering operations
+	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+}
+```
+
+Using `glClear` we are cleaning the screen's color buffer. We pass at that function `GL_COLOR_BUFFER_BIT` as parameter, which is a bit that specify what buffer we want to clear.
+\
+`glClearColor` takes three parameters for color and the last one for the opacity.
 
 ## Cleanup before close
 

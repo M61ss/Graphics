@@ -4,7 +4,12 @@
 
 #define WND_WIDTH 800
 #define WND_HEIGHT 600
-#define FATAL_ERROR(message) perror(message); glfwTerminate(); exit(-1);
+
+void fatalError(const char* message) 
+{
+	perror(message);
+	exit(-1);
+}
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -12,7 +17,7 @@ void processInput(GLFWwindow* window);
 int main() 
 {
 	if (glfwInit() == GLFW_FALSE) 
-		FATAL_ERROR("Failed to init GLFW.\n");
+		fatalError("Failed to init GLFW.\n");
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -20,7 +25,7 @@ int main()
 
 	GLFWwindow* window = glfwCreateWindow(WND_WIDTH, WND_HEIGHT, "LearneOpenGL", NULL, NULL);
 	if (window == NULL)
-		FATAL_ERROR("Failed to init GLFW.\n");
+		fatalError("Failed to init GLFW.\n");
 	
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -30,7 +35,7 @@ int main()
 
 	while (!glfwWindowShouldClose(window))
 	{
-		processInput(window);
+		//processInput(window);
 
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
