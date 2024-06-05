@@ -4,6 +4,18 @@
 
 The graphics pipeline's job can be split between two macro-steps: in the first one transforms 3D coordinates into 2D coordinates; the second one transforms 2D coordinates into actual colored pixels. Let's unwrap these two steps into the real graphics pipeline.
 
-The graphics pipeline can be divided into several steps where each step requires the output of the previous step as its input. All of these steps are highly specialized (they have one specific function) and can easily be executed in parallel. Because of their parallel nature, graphics cards of today have thousands of small processing cores to quickly process your data within the graphics pipeline. The processing cores run small programs on the GPU for each step of the pipeline. These small programs are called **shaders**.
+The graphics pipeline can be divided into several **steps** where each step requires the output of the previous step as its input. All of these steps are highly specialized (they have one specific function) and can easily be executed in **parallel**. Because of their parallel nature, graphics cards of today have thousands of small processing cores to quickly process your data within the graphics pipeline. The processing cores run small programs on the GPU for each step of the pipeline. These small programs are called **shaders**.
 
 Some of these shaders are **configurable** by the developer which allows us to write our own shaders to replace the existing default shaders. This gives us much more fine-grained control over specific parts of the pipeline and because they run on the GPU, they can also save us valuable CPU time. Shaders are written in the OpenGL Shading Language (GLSL).
+
+Here an abstract representation of all the stages of the graphics pipeline (blue sections represent sections where we can inject our own shaders):
+
+![graphicsPipeline](resources/graphicsPipeline.png)
+
+### Input
+
+As input to the graphics pipeline we pass in a list of three 3D coordinates that should form a triangle in an array here called **Vertex Data**; this vertex data is a collection of vertices. A **vertex** is a collection of data per 3D coordinate. This vertex's data is represented using vertex attributes that can contain any data we'd like.
+
+**Important**: In order for OpenGL to know what to make of your collection of coordinates and color values, OpenGL requires you to hint what kind of **render types** you want to form with the data (a collection of points, a collection of triangles or a line).
+\
+Those hints are called **primitives** and are given to OpenGL while calling any of the drawing commands. Some of these hints are `GL_POINTS`, `GL_TRIANGLES` and `GL_LINE_STRIP`.
