@@ -19,3 +19,21 @@ As input to the graphics pipeline we pass in a list of three 3D coordinates that
 **Important**: In order for OpenGL to know what to make of your collection of coordinates and color values, OpenGL requires you to hint what kind of **render types** you want to form with the data (a collection of points, a collection of triangles or a line).
 \
 Those hints are called **primitives** and are given to OpenGL while calling any of the drawing commands. Some of these hints are `GL_POINTS`, `GL_TRIANGLES` and `GL_LINE_STRIP`.
+
+### Vertex shader
+
+The first part of the pipeline is the **vertex shader** that takes as input a single vertex. The main purpose of the vertex shader is to transform 3D coordinates into different 3D coordinates and the vertex shader allows us to do some basic processing on the vertex attributes.
+
+### Geometry shader
+
+The output of the vertex shader stage is optionally passed to the **geometry shader**. The geometry shader takes as input a collection of vertices that form a primitive and has the ability to generate other shapes by emitting new vertices to form new (or other) primitive(s). In this example case, it generates a second triangle out of the given shape.
+
+### Shape assembly
+
+The **primitive assembly** stage takes as input all the vertices (or vertex if `GL_POINTS` is chosen) from the vertex (or geometry) shader that form one or more primitives and assembles all the point(s) in the primitive shape given; in this case two triangles.
+
+### Rasterization stage
+
+The output of the primitive assembly stage is then passed on to the **rasterization** stage where it maps the resulting primitive(s) to the corresponding pixels on the final screen, resulting in fragments for the fragment shader to use. Before the fragment shaders run, **clipping** is performed. Clipping discards all fragments that are outside your view, increasing performance.
+
+_Note_: A **fragment** in OpenGL is all the data required for OpenGL to render a single pixel.
