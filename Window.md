@@ -140,17 +140,13 @@ At the start the loop checks if the window has been instructed to be closed with
 \
 The `glfwSwapBuffers()` will swap the color buffer of the `window` (a large 2D buffer that contains color values for each pixel in GLFW's window) that is used to render to during this render iteration and show it as output to the screen.
 
----
-
-_Notice_:
-\
-All rendering machines keep in memory two buffers: the **front buffer**, for the final output image, and the **back buffer**, which store the frame that is modified from rendering functions and will be shown at next iteration of the render loop.
+> [!IMPORTANT]
+>
+> All rendering machines keep in memory two buffers: the **front buffer**, for the final output image, and the **back buffer**, which store the frame that is modified from rendering functions and will be shown at next iteration of the render loop.
 \
 Every operation executed into the loop is applied on the back buffer that will be shown at te next start of the loop. It is possible thanks to `glfwSwapBuffers()`, which is a function that swap front and back buffers every time it get called. 
 \
 So, buffers are swapped at every iteration so that the front buffer become the back one and vice versa.
-
----
 
 Then `glfwPollEvents()` checks if any events are triggered. To manage events it calls callback functions.
 
