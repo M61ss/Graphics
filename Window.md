@@ -101,7 +101,9 @@ glViewport(0, 0, 800, 600);
 - **end x** coord
 - **end y** coord
 
-_Note_: we can set also smaller OpenGL viewport's dimensions than the GLFW's one. It is clear that a piece of GLFW's viewport won't be shown.
+> [!NOTE]
+>
+> We can set also smaller OpenGL viewport's dimensions than the GLFW's one. It is clear that a piece of GLFW's viewport won't be shown.
 
 If we want to get the viewport resizable, then we need to implement this **callback function**:
 
