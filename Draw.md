@@ -24,7 +24,9 @@ float vertices[] = {
 >
 > Since we want to draw a 2D triangle, z coordinate must be 0 for every vertex. This way the **depth** of the triangle remains the same making it look like it's 2D.
 
-> ### Normalized Device Coordinates (NDC)
+> [!IMPORTANT]
+>
+> **Normalized Device Coordinates (NDC)**
 >
 > Once your vertex coordinates have been processed in the vertex shader, they should be in normalized device coordinates which is a small space where the x, y and z values vary from -1.0 to 1.0. Any coordinates that fall outside this range will be discarded/clipped and won't be visible on your screen.
 \
