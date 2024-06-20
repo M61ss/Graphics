@@ -102,7 +102,6 @@ glViewport(0, 0, 800, 600);
 - **end y** coord
 
 > [!NOTE]
->
 > We can set also smaller OpenGL viewport's dimensions than the GLFW's one. It is clear that a piece of GLFW's viewport won't be shown.
 
 If we want to get the viewport resizable, then we need to implement this **callback function**:
@@ -143,18 +142,17 @@ At the start the loop checks if the window has been instructed to be closed with
 The `glfwSwapBuffers()` will swap the color buffer of the `window` (a large 2D buffer that contains color values for each pixel in GLFW's window) that is used to render to during this render iteration and show it as output to the screen.
 
 > [!IMPORTANT]
->
 > All rendering machines keep in memory two buffers: the **front buffer**, for the final output image, and the **back buffer**, which store the frame that is modified from rendering functions and will be shown at next iteration of the render loop.
-\
-Every operation executed into the loop is applied on the back buffer that will be shown at te next start of the loop. It is possible thanks to `glfwSwapBuffers()`, which is a function that swap front and back buffers every time it get called. 
-\
-So, buffers are swapped at every iteration so that the front buffer become the back one and vice versa.
+> \
+> Every operation executed into the loop is applied on the back buffer that will be shown at te next start of the loop. It is possible thanks to `glfwSwapBuffers()`, which is a function that swap front and back buffers every time it get called.
+> \
+> So, buffers are swapped at every iteration so that the front buffer become the back one and vice versa.
 
 Then `glfwPollEvents()` checks if any events are triggered. To manage events it calls callback functions.
 
 ## Input
 
-To manage inputs of a GLFW window we will create a function which we call every time a new iteration of the render loop starts. Inside that we should put behaviors for every input that we want to manage. 
+To manage inputs of a GLFW window we will create a function which we call every time a new iteration of the render loop starts. Inside that we should put behaviors for every input that we want to manage.
 
 ```c++
 void processInput(GLFWwindow* window)
@@ -164,7 +162,7 @@ void processInput(GLFWwindow* window)
 }
 ```
 
-For example, here we used `glfwGetKey()`. This function returns whether the specified button (`GLFW_KEY_ESCAPE`) is currently being pressed or, generalizing, it returns the current status of a key. 
+For example, here we used `glfwGetKey()`. This function returns whether the specified button (`GLFW_KEY_ESCAPE`) is currently being pressed or, generalizing, it returns the current status of a key.
 
 Finally, the render loop should look like this:
 
