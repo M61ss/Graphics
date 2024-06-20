@@ -34,7 +34,9 @@ The **primitive assembly** stage takes as input all the vertices (or vertex if `
 
 The output of the primitive assembly stage is then passed on to the **rasterization** stage where it maps the resulting primitive(s) to the corresponding pixels on the final screen, resulting in fragments for the fragment shader to use. Before the fragment shaders run, **clipping** is performed. Clipping discards all fragments that are outside your view, increasing performance.
 
-_Note_: A **fragment** in OpenGL is all the data required for OpenGL to render a single pixel.
+> [!NOTE]
+>
+> A **fragment** in OpenGL is all the data required for OpenGL to render a single pixel.
 
 ## Fragment shader
 
@@ -44,7 +46,9 @@ The main purpose of the **fragment shader** is to calculate the final color of a
 
 After all the corresponding color values have been determined, the final object will then pass through one more stage that we call the **alpha test and blending stage**. This stage checks the corresponding depth and stencil value of the fragment and uses those to check if the resulting fragment is in front or behind other objects and should be discarded accordingly. The stage also checks for alpha values and blends the objects accordingly. So even if a pixel output color is calculated in the fragment shader, the final pixel color could still be something entirely different when rendering multiple triangles.
 
-_Note_: **alpha values** define the opacity of an object.
+> [!NOTE]
+>
+> **alpha values** define the opacity of an object.
 
 ## Tessellation
 
