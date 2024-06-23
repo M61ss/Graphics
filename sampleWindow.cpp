@@ -5,12 +5,7 @@
 #define WND_WIDTH 800
 #define WND_HEIGHT 600
 
-void fatalError(const char* message) 
-{
-	perror(message);
-	exit(-1);
-}
-
+void fatalError(const char* message);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
@@ -48,6 +43,12 @@ int main()
 
 	glfwTerminate();
 	exit(0);
+}
+
+void fatalError(const char* message)
+{
+	perror(message);
+	exit(-1);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
