@@ -87,7 +87,7 @@ layout (location = 0) in vec3 aPos;
 
 void main()
 {
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);
 }
 ```
 
@@ -96,10 +96,112 @@ void main()
 > 
 > Next we declare all the input vertex attributes in the vertex shader with the `in` keyword. Right now we only care about position data so we only need a single vertex attribute. GLSL has a vector datatype that contains 1 to 4 floats based on its postfix digit. Since each vertex has a 3D coordinate we create a `vec3` (3 stands for 3D) input variable with the name `aPos`. We also specifically set the location of the input variable via `layout (location = 0)`.
 >
-> To set the output of the vertex shader we have to assign the position data to the predefined `gl_Position` variable which is a `vec4` behind the scenes. At the end of the main function, whatever we set to `gl_Position` will be used as the output of the vertex shader. Since our input is a vector of size 3 we have to cast this to a vector of size 4. We can do this by inserting the `vec3` values inside the constructor of `vec4` and set its `w` component to 1.0f.
+> To set the output of the vertex shader we have to assign the position data to the **predefined** `gl_Position` variable which is a `vec4` behind the scenes. At the end of the main function, whatever we set to `gl_Position` will be used as the output of the vertex shader. Since our input is a vector of size 3 we have to cast this to a vector of size 4. We can do this by inserting the `vec3` values inside the constructor of `vec4` and set its `w` component to 1.0f.
 
 > [!NOTE]
 > The fourth component (`vec.w`) in `vec4` is a value used for **perspective division**.
 
 > [!CAUTION]
 > The current vertex shader is probably the most simple vertex shader we can imagine because we did no processing whatsoever on the input data and simply forwarded it to the shader's output. In real applications the input data is usually not already in normalized device coordinates so we first have to transform the input data to coordinates that fall within OpenGL's visible region.
+
+## Compiling shaders
+
+We take the source code for the vertex shader and store it in a const C string at the top of the code file for now:
+
+```c++
+const char *vertexShaderSource = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\0";
+```
+
+In order for OpenGL to use the shader it has to dynamically compile it at run-time from its source code. The first thing we need to do is create a shader object, again referenced by an ID. So we store the vertex shader as an unsigned int and create the shader with glCreateShader:
+
+```c++
+unsigned int vertexShader;
+vertexShader = glCreateShader(GL_VERTEX_SHADER);
+```
+
+We provide the type of shader we want to create as an argument to glCreateShader. Since we're creating a vertex shader we pass in `GL_VERTEX_SHADER`.
+
+Next we attach the shader source code to the shader object and compile the shader:
+
+```c++
+glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+glCompileShader(vertexShader);
+```
+
+Where `glShaderSource()`'s arguments are:
+- The **first** argument is the shader object to compile to. 
+- The **second** argument specifies how many strings we're passing as source code, which is only one. 
+- The **third** parameter is the actual source code of the vertex shader 
+- We can leave the **fourth** parameter to `NULL`.
+
+> [!IMPORTANT] Checking shaders' compile-time errors
+> In order that we want to keep informed about shaders' compile output, we should add this code after the call to `glCompileShader()`:
+>
+> ```c++
+> int  success;
+> char infoLog[512];
+> glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+> if (!success)
+> {
+>     glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+>     std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+> }
+> ```
+
+First we define an integer to indicate success and a storage container for the eventual error messages. Then we check if compilation was successful with `glGetShaderiv()`. If compilation failed, we should retrieve the error message with `glGetShaderInfoLog()` and print the error message.
+
+## Fragment shader
+
+The fragment shader is the second and final shader we're going to create for rendering a triangle. The fragment shader is all about calculating the color output of your pixels. To keep things simple the fragment shader will always output an orange-ish color.
+
+> [!IMPORTANT] RGBA
+> Colors in computer graphics are represented as an array of 4 values: the **r**ed, **g**reen, **b**lue and **a**lpha (opacity) component, commonly abbreviated to **RGBA**. When defining a color in OpenGL or GLSL we set the strength of each component to a value between 0.0 and 1.0. If, for example, we would set red to 1.0 and green to 1.0 we would get a mixture of both colors and get the color yellow. Given those 3 color components we can generate over 16 million different colors!
+
+A basic fragment shader looks like:
+
+```GLSL
+#version 330 core
+out vec4 FragColor;
+
+void main()
+{
+    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+} 
+```
+
+The fragment shader only requires one output variable and that is a vector of size 4 that defines the final color output that we should calculate ourselves. We can declare output values with the `out` keyword, that we here promptly named FragColor. Next we simply assign a `vec4` to the color output as an orange color with an alpha value of 1.0 (1.0 being completely opaque).
+
+The process for compiling a fragment shader is similar to the vertex shader, although this time we use the `GL_FRAGMENT_SHADER` constant as the shader type:
+
+```c++
+unsigned int fragmentShader;
+fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+glCompileShader(fragmentShader);
+```
+
+## Shader program
+
+A **shader program object** is the final linked version of multiple shaders combined. To use the recently compiled shaders we have to link them to a shader program object and then activate this shader program when rendering objects. The activated shader program's shaders will be used when we issue render calls.
+
+When **linking** the shaders into a program it links the outputs of each shader to the inputs of the next shader. This is also where you'll get linking errors if your outputs and inputs do not match.
+
+Creating a shader program:
+
+```c++
+unsigned int shaderProgram;
+shaderProgram = glCreateProgram();
+```
+
+The `glCreateProgram()` function creates a program and returns the ID reference to the newly created program object. Now we need to attach the previously compiled shaders to the program object and then link them with `glLinkProgram()`:
+
+```c++
+glAttachShader(shaderProgram, vertexShader);
+glAttachShader(shaderProgram, fragmentShader);
+glLinkProgram(shaderProgram);
+```
