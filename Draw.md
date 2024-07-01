@@ -54,7 +54,7 @@ OpenGL has many types of buffer objects and the buffer type of a vertex buffer o
 We can bind the newly created buffer to the `GL_ARRAY_BUFFER` target with the glBindBuffer function:
 
 ```c++
-glBindBuffer(GL_ARRAY_BUFFER, VBO); 
+glBindBuffer(GL_ARRAY_BUFFER, VBO);
 ```
 
 From that point on any buffer calls we make (in this case `GL_ARRAY_BUFFER`), it will be used to configure the currently bound buffer, which in this case is `VBO`. Then we can make a call to the `glBufferData()` function that copies the previously defined vertex data into the buffer's memory:
@@ -63,9 +63,10 @@ From that point on any buffer calls we make (in this case `GL_ARRAY_BUFFER`), it
 glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 ```
 
-This is a function specifically targeted to copy user-defined data into the currently bound buffer. 
-1. The first argument is the type of the buffer we want to copy data into: the vertex buffer object currently bound to the `GL_ARRAY_BUFFER` target. 
-2. The second argument specifies the size of the data (in bytes) we want to pass to the buffer; a simple sizeof of the vertex data suffices. 
+This is a function specifically targeted to copy user-defined data into the currently bound buffer.
+
+1. The first argument is the type of the buffer we want to copy data into: the vertex buffer object currently bound to the `GL_ARRAY_BUFFER` target.
+2. The second argument specifies the size of the data (in bytes) we want to pass to the buffer; a simple sizeof of the vertex data suffices.
 3. The third parameter is the actual data we want to send.
 4. The fourth parameter specifies how we want the graphics card to manage the given data. This can take 3 forms:
 
@@ -93,7 +94,7 @@ void main()
 
 > [!IMPORTANT] GLSL
 > As you can see, GLSL looks similar to C. Each shader begins with a declaration of its version. Since OpenGL 3.3 and higher the version numbers of GLSL match the version of OpenGL (GLSL version 420 corresponds to OpenGL version 4.2 for example). We also explicitly mention we're using core profile functionality.
-> 
+>
 > Next we declare all the input vertex attributes in the vertex shader with the `in` keyword. Right now we only care about position data so we only need a single vertex attribute. GLSL has a vector datatype that contains 1 to 4 floats based on its postfix digit. Since each vertex has a 3D coordinate we create a `vec3` (3 stands for 3D) input variable with the name `aPos`. We also specifically set the location of the input variable via `layout (location = 0)`.
 >
 > To set the output of the vertex shader we have to assign the position data to the **predefined** `gl_Position` variable which is a `vec4` behind the scenes. At the end of the main function, whatever we set to `gl_Position` will be used as the output of the vertex shader. Since our input is a vector of size 3 we have to cast this to a vector of size 4. We can do this by inserting the `vec3` values inside the constructor of `vec4` and set its `w` component to 1.0f.
@@ -134,9 +135,10 @@ glCompileShader(vertexShader);
 ```
 
 Where `glShaderSource()`'s arguments are:
-- The **first** argument is the shader object to compile to. 
-- The **second** argument specifies how many strings we're passing as source code, which is only one. 
-- The **third** parameter is the actual source code of the vertex shader 
+
+- The **first** argument is the shader object to compile to.
+- The **second** argument specifies how many strings we're passing as source code, which is only one.
+- The **third** parameter is the actual source code of the vertex shader
 - We can leave the **fourth** parameter to `NULL`.
 
 > [!IMPORTANT] Checking shaders' compile-time errors
@@ -171,7 +173,7 @@ out vec4 FragColor;
 void main()
 {
     FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-} 
+}
 ```
 
 The fragment shader only requires one output variable and that is a vector of size 4 that defines the final color output that we should calculate ourselves. We can declare output values with the `out` keyword, that we here promptly named FragColor. Next we simply assign a `vec4` to the color output as an orange color with an alpha value of 1.0 (1.0 being completely opaque).
@@ -205,3 +207,64 @@ glAttachShader(shaderProgram, vertexShader);
 glAttachShader(shaderProgram, fragmentShader);
 glLinkProgram(shaderProgram);
 ```
+
+> [!NOTE]
+> Just like shader compilation we can also check if linking a shader program failed and retrieve the corresponding log. However, instead of using `glGetShaderiv()` and `glGetShaderInfoLog()` we now use:
+>
+> ```c++
+> glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+> if (!success) {
+>     glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+>     // ...
+> }
+> ```
+
+The result is a program object that we can activate by calling `glUseProgram()` with the newly created program object as its argument:
+
+```c++
+glUseProgram(shaderProgram);
+```
+
+Every shader and rendering call after glUseProgram will now use this program object (and thus the shaders).
+
+> [!CAUTION]
+> Don't forget to delete the shader objects once we've linked them into the program object; we no longer need them anymore:
+>
+> ```c++
+> glDeleteShader(vertexShader);
+> glDeleteShader(fragmentShader);
+> ```
+
+## Linking vertex attributes
+
+The vertex shader allows us to specify any input we want in the form of vertex attributes and while this allows for great flexibility, it does mean we have to manually specify what part of our input data goes to which vertex attribute in the vertex shader. This means we have to specify how OpenGL should interpret the vertex data before rendering.
+
+Our vertex buffer data is formatted as follows:
+
+![vertex_data_buffer_format](/resources/buffer.png)
+
+#### Properties:
+
+- The position data is stored as 32-bit (4 byte) floating point values.
+- Each position is composed of 3 of those values.
+- There is no space (or other values) between each set of 3 values. The **values are tightly packed in the array**.
+- The first value in the data is at the beginning of the buffer.
+
+With this knowledge we can tell OpenGL how it should interpret the vertex data (per vertex attribute) using `glVertexAttribPointer()`:
+
+```c++
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+glEnableVertexAttribArray(0);
+```
+
+The function glVertexAttribPointer has quite a few parameters so let's carefully walk through them:
+
+1. The **first** parameter specifies which vertex attribute we want to configure. Remember that we specified the location of the position vertex attribute in the vertex shader with layout (`location = 0`). This sets the location of the vertex attribute to 0 and since we want to pass data to this vertex attribute, we pass in 0.
+2. The **second** argument specifies the size of the vertex attribute. The vertex attribute is a `vec3` so it is composed of 3 values.
+3. The **third** argument specifies the type of the data which is `GL_FLOAT` (a `vec*` in GLSL consists of floating point values).
+4. The **fourth** argument specifies if we want the data to be normalized. If we're inputting integer data types (int, byte) and we've set this to `GL_TRUE`, the integer data is normalized to 0 (or -1 for signed data) and 1 when converted to float. This is not relevant for us so we'll leave this at `GL_FALSE`.
+5. The **fifth** argument is known as the stride and tells us the space between consecutive vertex attributes. Since the next set of position data is located exactly 3 times the size of a float away we specify that value as the stride. Note that since we know that the array is tightly packed (there is no space between the next vertex attribute value) we could've also specified the stride as 0 to let OpenGL determine the stride (this only works when values are tightly packed). Whenever we have more vertex attributes we have to carefully define the spacing between each vertex attribute but we'll get to see more examples of that later on.
+6. The **sixth** parameter is of type `void*` and thus requires that weird cast. This is the offset of where the position data begins in the buffer. Since the position data is at the start of the data array this value is just 0. We will explore this parameter in more detail later on.
+
+> [!NOTE]
+> Each vertex attribute takes its data from memory managed by a VBO and which VBO it takes its data from (you can have multiple VBOs) is determined by the VBO currently bound to `GL_ARRAY_BUFFER` when calling `glVertexAttribPointer()`. Since the previously defined VBO is still bound before calling `glVertexAttribPointer()` vertex attribute 0 is now associated with its vertex data.
