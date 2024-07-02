@@ -268,3 +268,83 @@ The function glVertexAttribPointer has quite a few parameters so let's carefully
 
 > [!NOTE]
 > Each vertex attribute takes its data from memory managed by a VBO and which VBO it takes its data from (you can have multiple VBOs) is determined by the VBO currently bound to `GL_ARRAY_BUFFER` when calling `glVertexAttribPointer()`. Since the previously defined VBO is still bound before calling `glVertexAttribPointer()` vertex attribute 0 is now associated with its vertex data.
+
+Now that we specified how OpenGL should interpret the vertex data we should also enable the vertex attribute with `glEnableVertexAttribArray()` giving the vertex attribute location as its argument; vertex attributes are disabled by default. From that point on we have everything set up: we initialized the vertex data in a buffer using a vertex buffer object, set up a vertex and fragment shader and told OpenGL how to link the vertex data to the vertex shader's vertex attributes. Drawing an object in OpenGL would now look something like this:
+
+```c++
+// 0. copy our vertices array in a buffer for OpenGL to use
+glBindBuffer(GL_ARRAY_BUFFER, VBO);
+glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+// 1. then set the vertex attributes pointers
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+glEnableVertexAttribArray(0);
+// 2. use our shader program when we want to render an object
+glUseProgram(shaderProgram);
+// 3. now draw the object
+someOpenGLFunctionThatDrawsOurTriangle();
+```
+
+It looks cumbersome. Let's simplify!
+
+## Vertex Array Object
+
+A vertex array object (also known as **VAO**) can be bound just like a vertex buffer object and any subsequent vertex attribute calls from that point on will be stored inside the VAO. This has the advantage that when configuring vertex attribute pointers you only have to make those calls once and whenever we want to draw the object, we can just bind the corresponding VAO. This makes switching between different vertex data and attribute configurations as easy as binding a different VAO. All the state we just set is stored inside the VAO.
+
+> [!CAUTION]
+> Core OpenGL requires that we use a VAO so it knows what to do with our vertex inputs. If we fail to bind a VAO, OpenGL will most likely refuse to draw anything.
+
+A vertex array object stores the following:
+
+1. Calls to `glEnableVertexAttribArray()` or `glDisableVertexAttribArray()`.
+2. Vertex attribute configurations via `glVertexAttribPointer()`.
+3. Vertex buffer objects associated with vertex attributes by calls to `glVertexAttribPointer()`.
+
+![VAO](resources/VAO.png)
+
+The process to generate a VAO looks similar to that of a VBO:
+
+```c++
+unsigned int VAO;
+glGenVertexArrays(1, &VAO);
+```
+
+To use a VAO all you have to do is bind the VAO using `glBindVertexArray()`. From that point on we should bind/configure the corresponding VBO(s) and attribute pointer(s) and then unbind the VAO for later use. As soon as we want to draw an object, we simply bind the VAO with the preferred settings before drawing the object and that is it. In code this would look a bit like this:
+
+```c++
+// ..:: Initialization code (done once, unless your object frequently changes) :: ..
+// 1. bind Vertex Array Object
+glBindVertexArray(VAO);
+// 2. copy our vertices array in a buffer for OpenGL to use
+glBindBuffer(GL_ARRAY_BUFFER, VBO);
+glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+// 3. then set our vertex attributes pointers
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+glEnableVertexAttribArray(0);
+
+
+[...]
+
+// ..:: Drawing code (in render loop) :: ..
+// 4. draw the object
+glUseProgram(shaderProgram);
+glBindVertexArray(VAO);
+someOpenGLFunctionThatDrawsOurTriangle();
+```
+
+## Drawing a triangle
+
+To draw our objects of choice, OpenGL provides us with the `glDrawArrays()` function that draws primitives using the currently active shader, the previously defined vertex attribute configuration and with the VBO's vertex data (indirectly bound via the VAO).
+
+```c++
+glUseProgram(shaderProgram);
+glBindVertexArray(VAO);
+glDrawArrays(GL_TRIANGLES, 0, 3);
+```
+
+The `glDrawArrays()` function takes as its first argument the OpenGL primitive type we would like to draw. Since I said at the start we wanted to draw a triangle, we pass in `GL_TRIANGLES`.
+\
+The second argument specifies the starting index of the vertex array we'd like to draw; we just leave this at 0. The last argument specifies how many vertices we want to draw, which is 3 (we only render 1 triangle from our data, which is exactly 3 vertices long).
+
+Now try to compile the code and work your way backwards if any errors popped up. As soon as your application compiles, you should see the following result:
+
+![result](resources/result.png)
